@@ -75,6 +75,7 @@ let updateUserData = (data) => {
             let user = await db.User.findOne(
                 {
                     where: { id: data.id },
+                    raw: false
                 },
             )
             if (user) {
@@ -104,6 +105,7 @@ let deleteUser = (idUser) => {
                 where: {
                     id: idUser
                 },
+                raw: false
             })
             if (user) {
                 user.destroy()
