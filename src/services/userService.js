@@ -59,7 +59,6 @@ let handleUserLogin = (email, password) => {
                 let user = await db.User.findOne({
                     where: { email: email },
                     attributes: ['email', 'password', 'roleId'],
-                    raw: true
                 })
                 if (user) {
                     let checkPassword = await bcrypt.compareSync(password, user.password)
@@ -182,7 +181,8 @@ let editUser = (data) => {
                     lastName: data.lastName,
                     address: data.address,
                     phoneNumber: data.phoneNumber,
-                    gender: data.gender === '1' ? true : false
+                    gender: data.gender === '1' ? true : false,
+                    roleId: data.roleId,
                 })
 
                 await user.save()
