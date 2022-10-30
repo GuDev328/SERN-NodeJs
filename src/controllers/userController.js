@@ -75,10 +75,32 @@ let handeEditUser = async (req, res) => {
         message: status.message
     })
 }
+
+let getAllCode = async (req, res) => {
+    try {
+        let type = req.query.type
+        if (type) {
+            let data = await userService.getDataAllCode(type)
+            return res.status(200).json(data)
+        } else {
+            return res.status(200).json({
+                errCode: 1,
+                message: 'Missing require parameter'
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from sever'
+        })
+    }
+}
 module.exports = {
     handleLogin: handleLogin,
     handleGetAllUsers: handleGetAllUsers,
     handleCreateNewUser: handleCreateNewUser,
     handeDeleteUser: handeDeleteUser,
     handeEditUser: handeEditUser,
+    getAllCode: getAllCode,
 }

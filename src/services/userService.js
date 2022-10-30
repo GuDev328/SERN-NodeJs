@@ -201,10 +201,28 @@ let editUser = (data) => {
         }
     })
 }
+
+let getDataAllCode = (typeInput) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res = {}
+            let allcode = await db.Allcode.findAll({
+                where: { type: typeInput }
+            })
+            res.errCode = 0
+            res.data = allcode
+            resolve(res)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     handleUserLogin: handleUserLogin,
     getAllUsers: getAllUsers,
     createNewUser: createNewUser,
     deleteUser: deleteUser,
-    editUser: editUser
+    editUser: editUser,
+    getDataAllCode: getDataAllCode
 }
