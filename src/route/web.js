@@ -18,7 +18,7 @@ let initWebRoutes = (app) => {
     router.delete('/api/delete-user', userController.handeDeleteUser)
     router.put('/api/edit-user', userController.handeEditUser)
 
-    router.get('/allcode', userController.getAllCode)
+    router.get('/api/allcode', userController.getAllCode)
 
     return app.use("/", router)
 }
