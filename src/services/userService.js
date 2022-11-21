@@ -185,7 +185,13 @@ let editUser = (data) => {
                     phoneNumber: data.phoneNumber,
                     gender: data.gender,
                     roleId: data.roleId,
+                    positionId: data.positionId
                 })
+                if (data.image) {
+                    user.set({
+                        image: data.image,
+                    })
+                }
 
                 await user.save()
                 resolve({

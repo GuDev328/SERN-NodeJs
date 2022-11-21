@@ -25,8 +25,12 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
-app.use(bodyPasrser.json())
-app.use(bodyPasrser.urlencoded({ extended: true }))
+// app.use(bodyPasrser.json())
+// app.use(bodyPasrser.urlencoded({ extended: true }))
+
+app.use(bodyPasrser.json({ limit: '50mb' }))
+app.use(bodyPasrser.urlencoded({ limit: '50mb', extended: true }))
+
 app.use(cors({ origin: true }))
 viewEngine(app)
 initWebRoutes(app)
