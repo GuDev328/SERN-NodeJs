@@ -1,6 +1,7 @@
 var express = require("express")
 var homeController = require("../controllers/homeController")
 var userController = require("../controllers/userController")
+var doctorController = require("../controllers/doctorController")
 let router = express.Router()
 
 let initWebRoutes = (app) => {
@@ -19,6 +20,7 @@ let initWebRoutes = (app) => {
     router.put('/api/edit-user', userController.handeEditUser)
 
     router.get('/api/allcode', userController.getAllCode)
+    router.get('/api/get-top-doctor', doctorController.getTopDoctor)
 
     return app.use("/", router)
 }
