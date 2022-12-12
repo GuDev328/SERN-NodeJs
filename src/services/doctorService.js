@@ -28,8 +28,82 @@ let getTopDoctor = async (limit) => {
     })
 }
 
+let getDoctors = (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = ''
+            if (doctorId === 'ALL') {
+                data = await db.User.findAll({
+                    attributes: {
+                        exclude: ['password']
+                    },
+                    where: {
+                        roleId: 'R2'
+                    },
+                });
+                resolve({
+                    data: data,
+                    errCode: 0,
+                    errMessage: "OK"
+                })
+            } else {
+                data = await db.User.findOne({
+                    where: {
+                        id: doctorId,
+                        roleId: 'R2'
+                    },
+                    attributes: {
+                        exclude: ['password']
+                    },
+                })
+                if (!data) {
+                    resolve({
+                        data: data,
+                        errCode: 1,
+                        errMessage: "The doctor Id is not exist"
+                    })
+                } else {
+                    resolve({
+                        data: data,
+                        errCode: 0,
+                        errMessage: "OK"
+                    })
+                }
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 
+let saveInfoDoctor = (inputInfo) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputInfo.doctorId || !inputInfo.contentMarkdown || !inputInfo.contentHTML) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing require parameter'
+                })
+            } else {
+                await db.Markdown.create({
+                    contentHTML: inputInfo.contentHTML,
+                    contentMarkdown: inputInfo.contentMarkdown,
+                    description: inputInfo.description,
+                    doctorId: inputInfo.doctorId
+                })
+                resolve({
+                    errCode: 0,
+                    errMessage: "Save info doctor sucsess"
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 
 module.exports = {
     getTopDoctor: getTopDoctor,
+    getDoctors: getDoctors,
+    saveInfoDoctor: saveInfoDoctor,
 }
