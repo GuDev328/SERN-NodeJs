@@ -44,8 +44,29 @@ let saveInfoDoctor = async (req, res) => {
     }
 }
 
+let getDetailDoctors = async (req, res) => {
+    try {
+        let id = req.query.id
+        if (!id) {
+            return res.status(200).json({
+                errCode: 1,
+                errMessage: 'Missing required parameter',
+            })
+        }
+        let data = await doctorService.getDetailDoctors(id);
+        return res.status(200).json(data)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from sever "
+        })
+    }
+}
+
 module.exports = {
     getTopDoctor: getTopDoctor,
     getDoctors: getDoctors,
     saveInfoDoctor: saveInfoDoctor,
+    getDetailDoctors: getDetailDoctors
 }

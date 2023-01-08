@@ -102,8 +102,41 @@ let saveInfoDoctor = (inputInfo) => {
     })
 }
 
+let getDetailDoctors = (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = await db.User.findOne({
+                attributes: {
+                    exclude: ['password']
+                },
+                include: [
+                    { model: db.Markdown },
+                ],
+                raw: true,
+                nest: true,
+                where: { id: doctorId, roleId: 'R2' }
+            })
+            if (!data) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "The doctor Id is not exist"
+                })
+            } else {
+                resolve({
+                    data: data,
+                    errCode: 0,
+                    errMessage: "OK"
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctor: getTopDoctor,
     getDoctors: getDoctors,
     saveInfoDoctor: saveInfoDoctor,
+    getDetailDoctors: getDetailDoctors
 }
