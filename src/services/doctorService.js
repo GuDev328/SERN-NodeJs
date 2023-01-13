@@ -85,16 +85,34 @@ let saveInfoDoctor = (inputInfo) => {
                     errMessage: 'Missing require parameter'
                 })
             } else {
-                await db.Markdown.create({
-                    contentHTML: inputInfo.contentHTML,
-                    contentMarkdown: inputInfo.contentMarkdown,
-                    description: inputInfo.description,
-                    doctorId: inputInfo.doctorId
-                })
-                resolve({
-                    errCode: 0,
-                    errMessage: "Save info doctor sucsess"
-                })
+                if (!inputInfo.markdownId) {
+                    await db.Markdown.create({
+                        contentHTML: inputInfo.contentHTML,
+                        contentMarkdown: inputInfo.contentMarkdown,
+                        description: inputInfo.description,
+                        doctorId: inputInfo.doctorId
+                    })
+                } else {
+                    let markdown = await db.Markdown.findOne(
+                        {
+                            where: { id: inputInfo.markdownId },
+                            raw: false
+                        },
+                    )
+                    if (markdown) {
+                        markdown.set({
+                            contentHTML: inputInfo.contentHTML,
+                            contentMarkdown: inputInfo.contentMarkdown,
+                            description: inputInfo.description,
+                            doctorId: inputInfo.doctorId
+                        })
+                        await markdown.save()
+                    }
+                    resolve({
+                        errCode: 0,
+                        errMessage: "Save info doctor sucsess"
+                    })
+                }
             }
         } catch (error) {
             reject(error)
@@ -110,6 +128,7 @@ let getDetailDoctors = (doctorId) => {
                     exclude: ['password']
                 },
                 include: [
+                    { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
                     { model: db.Markdown },
                 ],
                 raw: true,
@@ -122,6 +141,10 @@ let getDetailDoctors = (doctorId) => {
                     errMessage: "The doctor Id is not exist"
                 })
             } else {
+                if (data.image) {
+                    let imgBase64 = new Buffer(data.image, 'base64').toString('binary')
+                    data.image = imgBase64
+                }
                 resolve({
                     data: data,
                     errCode: 0,
