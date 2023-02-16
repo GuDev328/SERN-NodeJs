@@ -1,5 +1,5 @@
 var db = require('../models/index')
-
+import moment from 'moment'
 let getTopDoctor = async (limit) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -157,9 +157,72 @@ let getDetailDoctors = (doctorId) => {
     })
 }
 
+let handleSaveSchedule = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            if (!data.result) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required param'
+                })
+            } else {
+                let schedule = data.result
+                await db.Schedule.destroy({
+                    where: {
+                        doctorId: schedule[0].doctorId,
+                        date: schedule[0].date
+                    }
+                })
+                await db.Schedule.bulkCreate(schedule)
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+let getSchedule = (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required param"
+                })
+            } else {
+                let dataa = await db.Schedule.findAll({
+                    where: {
+                        doctorId: doctorId * 1,
+                        date: date
+                    },
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
+                    include: [
+                        { model: db.Allcode, as: 'timeData', attributes: ['valueEn', 'valueVi'] }
+                    ],
+                    raw: true,
+                    nest: true,
+                })
+                if (!dataa) dataa = []
+                resolve({
+                    errCode: 0,
+                    data: dataa
+                })
+            }
+
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctor: getTopDoctor,
     getDoctors: getDoctors,
     saveInfoDoctor: saveInfoDoctor,
-    getDetailDoctors: getDetailDoctors
+    getDetailDoctors: getDetailDoctors,
+    handleSaveSchedule: handleSaveSchedule,
+    getSchedule: getSchedule
 }
