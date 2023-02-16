@@ -79,7 +79,11 @@ let getDoctors = (doctorId) => {
 let saveInfoDoctor = (inputInfo) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!inputInfo.doctorId || !inputInfo.contentMarkdown || !inputInfo.contentHTML) {
+            if (!inputInfo.doctorId || !inputInfo.contentMarkdown || !inputInfo.contentHTML
+                || !inputInfo.addressClinic || !inputInfo.nameClinic || !inputInfo.priceId
+                || !inputInfo.provinceId
+                || !inputInfo.paymentId
+            ) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing require parameter'
@@ -108,11 +112,37 @@ let saveInfoDoctor = (inputInfo) => {
                         })
                         await markdown.save()
                     }
-                    resolve({
-                        errCode: 0,
-                        errMessage: "Save info doctor sucsess"
-                    })
                 }
+                let doctorInfo = await db.DoctorInfo.findOne({
+                    where: { doctorId: inputInfo.doctorId },
+                    raw: false
+                })
+                if (!doctorInfo) {
+                    await db.DoctorInfo.create({
+                        doctorId: inputInfo.doctorId,
+                        priceId: inputInfo.priceId,
+                        provinceId: inputInfo.provinceId,
+                        paymentId: inputInfo.paymentId,
+                        nameClinic: inputInfo.nameClinic,
+                        addressClinic: inputInfo.addressClinic,
+                        note: inputInfo.note
+                    })
+                } else {
+                    doctorInfo.set({
+                        priceId: inputInfo.priceId,
+                        provinceId: inputInfo.provinceId,
+                        paymentId: inputInfo.paymentId,
+                        nameClinic: inputInfo.nameClinic,
+                        addressClinic: inputInfo.addressClinic,
+                        note: inputInfo.note
+                    })
+                    await doctorInfo.save()
+                }
+
+                resolve({
+                    errCode: 0,
+                    errMessage: "Save info doctor sucsess"
+                })
             }
         } catch (error) {
             reject(error)
@@ -130,6 +160,7 @@ let getDetailDoctors = (doctorId) => {
                 include: [
                     { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
                     { model: db.Markdown },
+                    { model: db.DoctorInfo }
                 ],
                 raw: true,
                 nest: true,
