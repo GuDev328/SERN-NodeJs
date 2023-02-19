@@ -2,6 +2,7 @@ var express = require("express")
 var homeController = require("../controllers/homeController")
 var userController = require("../controllers/userController")
 var doctorController = require("../controllers/doctorController")
+var patientController = require("../controllers/patientController")
 let router = express.Router()
 
 let initWebRoutes = (app) => {
@@ -26,6 +27,8 @@ let initWebRoutes = (app) => {
     router.get('/api/get-detail-doctors', doctorController.getDetailDoctors)
     router.post('/api/save-schedule', doctorController.handleSaveSchedule)
     router.get("/api/get-schedule", doctorController.handleGetSchedule)
+
+    router.post("/api/booking-appointment", patientController.handleBookingAppointment)
     return app.use("/", router)
 }
 

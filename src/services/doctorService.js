@@ -160,7 +160,15 @@ let getDetailDoctors = (doctorId) => {
                 include: [
                     { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
                     { model: db.Markdown },
-                    { model: db.DoctorInfo }
+                    {
+                        model: db.DoctorInfo,
+                        include: [
+                            { model: db.Allcode, as: 'priceData', attributes: ['valueEn', 'valueVi'] },
+                            { model: db.Allcode, as: 'paymentData', attributes: ['valueEn', 'valueVi'] },
+                            { model: db.Allcode, as: 'provinceData', attributes: ['valueEn', 'valueVi'] }
+                        ]
+                    },
+
                 ],
                 raw: true,
                 nest: true,
