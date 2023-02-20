@@ -146,6 +146,55 @@ let postBooking = (data) => {
     })
 }
 
+let confirmBookingAppointment = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (data.patientId == data.userId) {
+                let booking = await db.Booking.findOne({
+                    where: { id: data.bookingId },
+                    raw: false
+                })
+                if (booking) {
+                    if (booking.statusId === 'S1') {
+                        booking.set({
+                            statusId: 'S2'
+                        })
+                        await booking.save()
+                        resolve({
+                            errCode: 0,
+                            errMessage: 'Ok'
+                        })
+                    } else {
+                        if (booking.statusId === 'S2') {
+                            resolve({
+                                errCode: 3,
+                                errMessage: 'Confirmed'
+                            })
+                        } else {
+                            resolve({
+                                errCode: 4,
+                                errMessage: 'Appointment done '
+                            })
+                        }
+                    }
+                } else {
+                    resolve({
+                        errCode: 2,
+                        errMessage: 'Booking not found'
+                    })
+                }
+            } else {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Wrong account'
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
-    postBooking: postBooking
+    postBooking: postBooking,
+    confirmBookingAppointment: confirmBookingAppointment
 }

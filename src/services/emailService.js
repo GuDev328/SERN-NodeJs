@@ -39,8 +39,7 @@ let sendEmailComfirmBookingAppointment = async (sendData) => {
     <p><b>Địa chỉ: </b> ${sendData.patientAddress}</p>
     <p><b>Lí do khám bệnh: </b> ${sendData.reason}</p>
     <p>Nếu các thông tin trên là đúng, mời bạn vui lòng bấm vào đường link bên dưới để xác nhận và hoàn tất thủ tục đặt lịch khám bệnh.</p>
-    <a href='http://localhost:3000/confirm-booking?bookingId=${sendData.bookingId}&patientId=${sendData.patientId}'>Click here</a>
-
+    <a href='http://localhost:3000/confirm-booking?bookingId=${sendData.bookingId}&patientId=${sendData.patientId}'>Bấm vào đây</a>
     <h3>Xin chân thành cảm ơn!</h3>`
 
     let htmlEn = `
