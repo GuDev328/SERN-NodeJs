@@ -12,18 +12,13 @@ module.exports = {
             statusId: {
                 type: Sequelize.STRING
             },
-            doctorId: {
+            scheduleId: {
                 type: Sequelize.INTEGER
             },
             patientId: {
                 type: Sequelize.INTEGER
             },
-            date: {
-                type: Sequelize.DATE
-            },
-            timeType: {
-                type: Sequelize.STRING
-            },
+
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE

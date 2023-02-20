@@ -6,10 +6,7 @@ let postBooking = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             console.log(data)
-            if (data && data.doctorId
-                && data.patientId
-                && data.timeType
-                && data.date
+            if (data && data.patientId
                 && data.patientPhoneNumber
                 && data.patientName
                 && data.patientGender
@@ -18,10 +15,8 @@ let postBooking = (data) => {
                 && data.patientReason) {
                 let bookingCheck = await db.Booking.findOne({
                     where: {
-                        doctorId: data.doctorId,
-                        patientId: data.patientId,
-                        date: data.date,
-                        timeType: data.timeType
+                        scheduleId: data.scheduleId,
+                        patientId: data.patientId
                     }
                 })
                 if (bookingCheck) {
@@ -40,9 +35,7 @@ let postBooking = (data) => {
                 } else {
                     let schedule = await db.Schedule.findOne({
                         where: {
-                            doctorId: data.doctorId,
-                            date: data.date,
-                            timeType: data.timeType
+                            id: data.scheduleId
                         },
                         raw: false
                     })
@@ -59,17 +52,13 @@ let postBooking = (data) => {
                         // await schedule.save()
                         await db.Booking.findOrCreate({
                             where: {
-                                doctorId: data.doctorId,
+                                scheduleId: data.scheduleId,
                                 patientId: data.patientId,
-                                date: data.date,
-                                timeType: data.timeType
                             },
                             defaults: {
                                 statusId: 'S1',
-                                doctorId: data.doctorId,
+                                scheduleId: data.scheduleId,
                                 patientId: data.patientId,
-                                date: data.date,
-                                timeType: data.timeType
                             }
                         }).then(async ([booking, created]) => {
                             if (created) {
@@ -89,7 +78,7 @@ let postBooking = (data) => {
                                 })
                                 let userDoctor = await db.User.findOne({
                                     where: {
-                                        id: data.doctorId,
+                                        id: schedule.doctorId,
                                     },
                                     include: [
                                         {
@@ -103,11 +92,14 @@ let postBooking = (data) => {
                                     nest: true,
                                 })
                                 let doctorName = data.language === 'vi' ? userDoctor.lastName + ' ' + userDoctor.firstName : userDoctor.firstName + ' ' + userDoctor.lastName
+                                let time = await db.Allcode.findOne({
+                                    where: { keyMap: schedule.timeType },
+                                })
                                 await emailService.sendEmailComfirmBookingAppointment({
                                     receiverEmail: userPatient.email,
                                     doctorName: doctorName,
-                                    time: data.timeData.valueVi,
-                                    date: data.date,
+                                    time: time.valueVi,
+                                    date: schedule.date,
                                     patientName: data.patientName,
                                     patientGender: data.patientGender,
                                     patientDob: data.patientDob,
