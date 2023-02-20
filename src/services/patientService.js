@@ -5,6 +5,7 @@ import moment from 'moment'
 let postBooking = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            console.log(data)
             if (data && data.doctorId
                 && data.patientId
                 && data.timeType
@@ -51,11 +52,11 @@ let postBooking = (data) => {
                             errMessage: 'This time is full patient'
                         })
                     } else {
-                        let newcurrentNumber = schedule.currentNumber + 1;
-                        schedule.set({
-                            currentNumber: newcurrentNumber
-                        })
-                        await schedule.save()
+                        // let newcurrentNumber = schedule.currentNumber + 1;
+                        // schedule.set({
+                        //     currentNumber: newcurrentNumber
+                        // })
+                        // await schedule.save()
                         await db.Booking.findOrCreate({
                             where: {
                                 doctorId: data.doctorId,
@@ -114,7 +115,9 @@ let postBooking = (data) => {
                                     patientAddress: data.patientAddress,
                                     reason: data.patientReason,
                                     price: userDoctor.DoctorInfo.priceData,
-                                    language: data.language
+                                    language: data.language,
+                                    bookingId: booking.id,
+                                    patientId: data.patientId
                                 })
                                 resolve({
                                     errCode: 0,

@@ -39,7 +39,8 @@ let sendEmailComfirmBookingAppointment = async (sendData) => {
     <p><b>Địa chỉ: </b> ${sendData.patientAddress}</p>
     <p><b>Lí do khám bệnh: </b> ${sendData.reason}</p>
     <p>Nếu các thông tin trên là đúng, mời bạn vui lòng bấm vào đường link bên dưới để xác nhận và hoàn tất thủ tục đặt lịch khám bệnh.</p>
-    <a href='https://www.youtube.com/'>Bấm và đây</a>
+    <a href='http://localhost:3000/confirm-booking?bookingId=${sendData.bookingId}&patientId=${sendData.patientId}'>Click here</a>
+
     <h3>Xin chân thành cảm ơn!</h3>`
 
     let htmlEn = `
@@ -57,7 +58,7 @@ let sendEmailComfirmBookingAppointment = async (sendData) => {
     <p><b>Address: </b> ${sendData.patientAddress}</p>
     <p><b>Reasons for medical examination: </b> ${sendData.reason}</p>
     <p>If the above information is correct, please click on the link below to confirm and complete the medical appointment booking procedure.</p>
-    <a href='https://www.youtube.com/'>Click here</a>
+    <a href='http://localhost:3000/confirm-booking?bookingId=${sendData.bookingId}&patientId=${sendData.patientId}'>Click here</a>
     <h3>Sincerely thank!</h3>
     <h3>----------------</h3>
     <h3>BookingCareClone</h3>`
