@@ -3,6 +3,7 @@ var homeController = require("../controllers/homeController")
 var userController = require("../controllers/userController")
 var doctorController = require("../controllers/doctorController")
 var patientController = require("../controllers/patientController")
+var specialtyController = require("../controllers/specialtyController")
 let router = express.Router()
 
 let initWebRoutes = (app) => {
@@ -30,6 +31,11 @@ let initWebRoutes = (app) => {
 
     router.post("/api/booking-appointment", patientController.handleBookingAppointment)
     router.put('/api/comfirm-booking', patientController.handleConfirmBookingAppointment)
+
+    router.post("/api/create-new-specialty", specialtyController.handleCreateNewSpecialty)
+    router.get("/api/get-all-specialty", specialtyController.handleGetAllSpecialty)
+    router.delete('/api/delete-specialty', specialtyController.handleDeleteSpecialty)
+    router.put("/api/edit-specialty", specialtyController.handleEditSpecialty)
     return app.use("/", router)
 }
 

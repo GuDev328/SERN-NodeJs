@@ -11,7 +11,10 @@ module.exports = {
             name: {
                 type: Sequelize.STRING
             },
-            description: {
+            contentHTML: {
+                type: Sequelize.TEXT
+            },
+            contentMarkdown: {
                 type: Sequelize.TEXT
             },
             image: {
