@@ -28,6 +28,7 @@ let initWebRoutes = (app) => {
     router.get('/api/get-detail-doctors', doctorController.getDetailDoctors)
     router.post('/api/save-schedule', doctorController.handleSaveSchedule)
     router.get("/api/get-schedule", doctorController.handleGetSchedule)
+    router.get('/api/get-list-detail-doctors-by-specialty', doctorController.getListDetailDoctorsBySpecialty)
 
     router.post("/api/booking-appointment", patientController.handleBookingAppointment)
     router.put('/api/comfirm-booking', patientController.handleConfirmBookingAppointment)

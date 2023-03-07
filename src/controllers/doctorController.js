@@ -64,6 +64,26 @@ let getDetailDoctors = async (req, res) => {
     }
 }
 
+let getListDetailDoctorsBySpecialty = async (req, res) => {
+    try {
+        let specialtyId = req.query.id
+        if (!specialtyId) {
+            return res.status(200).json({
+                errCode: 1,
+                errMessage: 'Missing required parameter',
+            })
+        }
+        let data = await doctorService.getListDetailDoctorsBySpecialty(specialtyId);
+        return res.status(200).json(data)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from sever "
+        })
+    }
+}
+
 let handleSaveSchedule = async (req, res) => {
     try {
         let response = await doctorService.handleSaveSchedule(req.body);
@@ -96,5 +116,6 @@ module.exports = {
     saveInfoDoctor: saveInfoDoctor,
     getDetailDoctors: getDetailDoctors,
     handleSaveSchedule: handleSaveSchedule,
-    handleGetSchedule: handleGetSchedule
+    handleGetSchedule: handleGetSchedule,
+    getListDetailDoctorsBySpecialty: getListDetailDoctorsBySpecialty
 }

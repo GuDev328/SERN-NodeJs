@@ -10,8 +10,13 @@ let getTopDoctor = async (limit) => {
                 include: [
                     { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
                     { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] },
-                    { model: db.Allcode, as: 'roleData', attributes: ['valueEn', 'valueVi'] }
-
+                    { model: db.Allcode, as: 'roleData', attributes: ['valueEn', 'valueVi'] },
+                    {
+                        model: db.DoctorInfo,
+                        include: [
+                            { model: db.Specialty },
+                        ]
+                    },
                 ],
                 raw: true,
                 nest: true,
@@ -76,12 +81,46 @@ let getDoctors = (doctorId) => {
     })
 }
 
+let getListDetailDoctorsBySpecialty = (specialtyId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let specialty = await db.Specialty.findOne({
+                where: { id: specialtyId }
+            })
+            if (specialty) {
+                let listId = await db.DoctorInfo.findAll({
+                    where: { specialtyId: specialtyId },
+                    attributes: ['doctorId'],
+                })
+                let list = []
+                list = await Promise.all(listId.map(async (item) => {
+                    let detailDoctor = await getDetailDoctors(item.doctorId)
+                    return detailDoctor.data
+                }))
+                resolve({
+                    errCode: 0,
+                    errMessage: 'OK',
+                    data: list
+                })
+            } else {
+                resolve({
+                    errCode: 2,
+                    errMessage: 'Specialty is not exist'
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 let saveInfoDoctor = (inputInfo) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!inputInfo.doctorId || !inputInfo.contentMarkdown || !inputInfo.contentHTML
                 || !inputInfo.addressClinic || !inputInfo.nameClinic || !inputInfo.priceId
                 || !inputInfo.provinceId
+                || !inputInfo.specialtyId
                 || !inputInfo.paymentId
             ) {
                 resolve({
@@ -123,6 +162,7 @@ let saveInfoDoctor = (inputInfo) => {
                         priceId: inputInfo.priceId,
                         provinceId: inputInfo.provinceId,
                         paymentId: inputInfo.paymentId,
+                        specialtyId: inputInfo.specialtyId,
                         nameClinic: inputInfo.nameClinic,
                         addressClinic: inputInfo.addressClinic,
                         note: inputInfo.note
@@ -133,6 +173,7 @@ let saveInfoDoctor = (inputInfo) => {
                         provinceId: inputInfo.provinceId,
                         paymentId: inputInfo.paymentId,
                         nameClinic: inputInfo.nameClinic,
+                        specialtyId: inputInfo.specialtyId,
                         addressClinic: inputInfo.addressClinic,
                         note: inputInfo.note
                     })
@@ -263,5 +304,6 @@ module.exports = {
     saveInfoDoctor: saveInfoDoctor,
     getDetailDoctors: getDetailDoctors,
     handleSaveSchedule: handleSaveSchedule,
-    getSchedule: getSchedule
+    getSchedule: getSchedule,
+    getListDetailDoctorsBySpecialty: getListDetailDoctorsBySpecialty
 }
