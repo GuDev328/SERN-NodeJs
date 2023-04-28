@@ -4,6 +4,7 @@ var userController = require("../controllers/userController")
 var doctorController = require("../controllers/doctorController")
 var patientController = require("../controllers/patientController")
 var specialtyController = require("../controllers/specialtyController")
+var clinicController = require("../controllers/clinicController")
 let router = express.Router()
 
 let initWebRoutes = (app) => {
@@ -37,6 +38,11 @@ let initWebRoutes = (app) => {
     router.get("/api/get-all-specialty", specialtyController.handleGetAllSpecialty)
     router.delete('/api/delete-specialty', specialtyController.handleDeleteSpecialty)
     router.put("/api/edit-specialty", specialtyController.handleEditSpecialty)
+
+    router.post("/api/create-new-clinic", clinicController.handleCreateNewClinic)
+    router.get("/api/get-all-clinic", clinicController.handleGetAllClinic)
+    router.delete('/api/delete-clinic', clinicController.handleDeleteClinic)
+    router.put("/api/edit-clinic", clinicController.handleEditClinic)
     return app.use("/", router)
 }
 
