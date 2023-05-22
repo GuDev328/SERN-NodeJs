@@ -5,7 +5,6 @@ import moment from 'moment'
 let postBooking = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log(data)
             if (data && data.patientId
                 && data.patientPhoneNumber
                 && data.patientName
@@ -156,10 +155,29 @@ let confirmBookingAppointment = (data) => {
                 })
                 if (booking) {
                     if (booking.statusId === 'S1') {
-                        booking.set({
-                            statusId: 'S2'
+                        let schedule = await db.Schedule.findOne({
+                            where: {
+                                id: booking.scheduleId
+                            },
+                            raw: false
                         })
-                        await booking.save()
+                        if (schedule.currentNumber >= schedule.maxNumber) {
+                            resolve({
+                                errCode: 5,
+                                errMessage: 'Full patient'
+                            })
+                        } else {
+                            let newcurrentNumber = schedule.currentNumber + 1
+                            schedule.set({
+                                currentNumber: newcurrentNumber
+                            })
+                            booking.set({
+                                statusId: 'S2'
+                            })
+                            await schedule.save()
+                            await booking.save()
+                        }
+
                         resolve({
                             errCode: 0,
                             errMessage: 'Ok'

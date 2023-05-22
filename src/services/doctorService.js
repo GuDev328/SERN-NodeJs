@@ -1,5 +1,6 @@
 var db = require('../models/index')
 import moment from 'moment'
+import { where } from 'sequelize'
 let getTopDoctor = async (limit) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -298,6 +299,102 @@ let getSchedule = (doctorId, date) => {
     })
 }
 
+let getAppoitment = (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required param"
+                })
+            } else {
+                // let dataa = await db.Schedule.findAll({
+                //     where: {
+                //         doctorId: doctorId * 1,
+                //         date: date
+                //     },
+                //     attributes: {
+                //         exclude: ['createdAt', 'updatedAt']
+                //     },
+                //     include: [
+                //         { model: db.Allcode, as: 'timeData', attributes: ['valueEn', 'valueVi'] }
+                //     ],
+                //     raw: true,
+                //     nest: true,
+                // })
+                let booking = await db.Booking.findAll({
+                    include: [
+                        { model: db.Allcode, as: 'statusData', attributes: ['valueEn', 'valueVi'] },
+                        {
+                            model: db.Schedule,
+                            required: true,
+                            where: {
+                                doctorId: doctorId,
+                                date: date
+                            },
+                            include: [
+                                { model: db.Allcode, as: 'timeData', attributes: ['valueEn', 'valueVi'] },
+                            ]
+                        },
+                        {
+                            model: db.PatientInfo,
+                            include: [
+                                { model: db.Allcode, as: 'genderPatientData', attributes: ['valueEn', 'valueVi'] },
+                            ]
+                        },
+                        {
+                            model: db.User,
+                            attributes: ['email']
+
+                        },
+                    ],
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
+                    raw: true,
+                    nest: true,
+                })
+                if (!booking) booking = []
+                resolve({
+                    errCode: 0,
+                    data: booking
+                })
+            }
+
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+let doneAppoitment = (bookingId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!bookingId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Mising required parameter"
+                })
+            } else {
+                let booking = await db.Booking.findOne({
+                    where: { id: bookingId },
+                    raw: false
+                })
+                booking.set({
+                    statusId: 'S3'
+                })
+                await booking.save()
+                resolve({
+                    errCode: 0,
+                    errMessage: "OK"
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctor: getTopDoctor,
     getDoctors: getDoctors,
@@ -305,5 +402,7 @@ module.exports = {
     getDetailDoctors: getDetailDoctors,
     handleSaveSchedule: handleSaveSchedule,
     getSchedule: getSchedule,
-    getListDetailDoctorsBySpecialty: getListDetailDoctorsBySpecialty
+    getListDetailDoctorsBySpecialty: getListDetailDoctorsBySpecialty,
+    getAppoitment: getAppoitment,
+    doneAppoitment: doneAppoitment
 }

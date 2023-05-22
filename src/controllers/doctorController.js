@@ -110,6 +110,32 @@ let handleGetSchedule = async (req, res) => {
     }
 }
 
+let handleGetAppoitment = async (req, res) => {
+    try {
+        let response = await doctorService.getAppoitment(req.query.doctorId, req.query.date)
+        return res.status(200).json({ response })
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from sever "
+        })
+    }
+}
+
+let handleDoneAppoitment = async (req, res) => {
+    try {
+        console.log(req.body)
+        let response = await doctorService.doneAppoitment(req.body.bookingId)
+        return res.status(200).json({ response })
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from sever "
+        })
+    }
+}
 module.exports = {
     getTopDoctor: getTopDoctor,
     getDoctors: getDoctors,
@@ -117,5 +143,7 @@ module.exports = {
     getDetailDoctors: getDetailDoctors,
     handleSaveSchedule: handleSaveSchedule,
     handleGetSchedule: handleGetSchedule,
-    getListDetailDoctorsBySpecialty: getListDetailDoctorsBySpecialty
+    getListDetailDoctorsBySpecialty: getListDetailDoctorsBySpecialty,
+    handleGetAppoitment: handleGetAppoitment,
+    handleDoneAppoitment: handleDoneAppoitment
 }

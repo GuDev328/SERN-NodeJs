@@ -5,7 +5,6 @@ var CRUDService = require('../services/CRUDService')
 let getHomePage = async (req, res) => {
     try {
         let data = await db.User.findAll();
-        console.log(data)
         return res.render('homePage.ejs', {
             data: JSON.stringify(data),
         })
@@ -20,7 +19,6 @@ let getCRUD = (req, res) => {
 
 let postCRUD = async (req, res) => {
     let message = await CRUDService.createNewUser(req.body)
-    console.log(message)
     return res.send('posted')
 }
 
@@ -51,7 +49,6 @@ let putCRUD = async (req, res) => {
 
 let deleteCRUD = async (req, res) => {
     let id = req.query.id;
-    console.log(id)
     if (id) {
         await CRUDService.deleteUser(id)
         return res.send('deleted')
