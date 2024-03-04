@@ -1,7 +1,7 @@
-var db = require('../models/index')
+var db = require("../models/index");
 const nodemailer = require("nodemailer");
-import moment from 'moment'
-require('dotenv').config()
+import moment from "moment";
+require("dotenv").config();
 
 let sendEmailComfirmBookingAppointment = async (sendData) => {
     let transporter = nodemailer.createTransport({
@@ -14,14 +14,16 @@ let sendEmailComfirmBookingAppointment = async (sendData) => {
         },
     });
     if (sendData.patientGender) {
-        if (sendData.language === 'vi') {
-            if (sendData.patientGender === 'M') sendData.patientGender = 'Nam'
-            if (sendData.patientGender === 'F') sendData.patientGender = 'Nữ'
-            if (sendData.patientGender === 'O') sendData.patientGender = 'Khác'
+        if (sendData.language === "vi") {
+            if (sendData.patientGender === "M") sendData.patientGender = "Nam";
+            if (sendData.patientGender === "F") sendData.patientGender = "Nữ";
+            if (sendData.patientGender === "O") sendData.patientGender = "Khác";
         } else {
-            if (sendData.patientGender === 'M') sendData.patientGender = 'Male'
-            if (sendData.patientGender === 'F') sendData.patientGender = 'Female'
-            if (sendData.patientGender === 'O') sendData.patientGender = 'Other'
+            if (sendData.patientGender === "M") sendData.patientGender = "Male";
+            if (sendData.patientGender === "F")
+                sendData.patientGender = "Female";
+            if (sendData.patientGender === "O")
+                sendData.patientGender = "Other";
         }
     }
     let htmlVi = `
@@ -40,7 +42,7 @@ let sendEmailComfirmBookingAppointment = async (sendData) => {
     <p><b>Lí do khám bệnh: </b> ${sendData.reason}</p>
     <p>Nếu các thông tin trên là đúng, mời bạn vui lòng bấm vào đường link bên dưới để xác nhận và hoàn tất thủ tục đặt lịch khám bệnh.</p>
     <a href='http://localhost:3000/confirm-booking?bookingId=${sendData.bookingId}&patientId=${sendData.patientId}'>Bấm vào đây</a>
-    <h3>Xin chân thành cảm ơn!</h3>`
+    <h3>Xin chân thành cảm ơn!</h3>`;
 
     let htmlEn = `
     <h3>Dear, ${sendData.patientName}</h3>
@@ -60,19 +62,24 @@ let sendEmailComfirmBookingAppointment = async (sendData) => {
     <a href='http://localhost:3000/confirm-booking?bookingId=${sendData.bookingId}&patientId=${sendData.patientId}'>Click here</a>
     <h3>Sincerely thank!</h3>
     <h3>----------------</h3>
-    <h3>BookingCareClone</h3>`
-    let htmlContent = sendData.language === 'vi' ? htmlVi : htmlEn
-    let subjectContent = sendData.language === 'vi' ? "Xác nhận đặt lịch khám bệnh tại BookingCare" : "Confirm your appointment at BookingCare"
+    <h3>BookingCareClone</h3>`;
+    let htmlContent = sendData.language === "vi" ? htmlVi : htmlEn;
+    let subjectContent =
+        sendData.language === "vi"
+            ? "Xác nhận đặt lịch khám bệnh tại BookingCare"
+            : "Confirm your appointment at BookingCare";
 
+    try {
+        let info = await transporter.sendMail({
+            from: '"BookingCareCloneByGuDev" <foo@example.com>', // sender address
+            to: sendData.receiverEmail, // list of receivers
+            subject: subjectContent, // Subject line
+            html: htmlContent, // html body
+        });
+    } catch (error) {}
     // send mail with defined transport object
-    let info = await transporter.sendMail({
-        from: '"BookingCareCloneByGuDev" <foo@example.com>', // sender address
-        to: sendData.receiverEmail, // list of receivers
-        subject: subjectContent, // Subject line
-        html: htmlContent // html body
-    });
-}
+};
 
 module.exports = {
-    sendEmailComfirmBookingAppointment: sendEmailComfirmBookingAppointment
-}
+    sendEmailComfirmBookingAppointment: sendEmailComfirmBookingAppointment,
+};
